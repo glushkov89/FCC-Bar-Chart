@@ -1,0 +1,132 @@
+#editor, #preview {
+  margin: 3vh 2vw 3vh 2vw;
+  padding: 3% 5%;
+  width: 30vw;
+  height: auto;
+  font-size: 0.8vw;
+  background-color: #021c1e;
+  border: 2px solid;
+  border-radius: 6px;
+  -webkit-box-shadow: 4px 8px 12px 0 #021c1e;
+          box-shadow: 4px 8px 12px 0 #021c1e;
+}
+
+@media only screen and (orientation: portrait) {
+  main {
+    display: inline !important;
+  }
+  #editor,
+  #preview {
+    width: 60vw;
+    font-size: 2vh;
+  }
+  .preview-container {
+    display: inline !important;
+    position: absolute;
+    top: 5vh;
+    left: 20vw;
+  }
+  .editor-container {
+    position: absolute;
+    top: 3vh;
+    display: inline !important;
+  }
+  .fa {
+    font-size: 5vh !important;
+  }
+  .down {
+    z-index: -10;
+  }
+}
+
+body {
+  background-color: #90afc5;
+}
+
+main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+
+code {
+  margin: 0 0;
+  background-color: #6ab187;
+  color: #021c1e;
+  border-radius: 5px;
+  page-break-inside: auto;
+  font-family: monospace;
+  font-size: inherit;
+  line-height: 1.6;
+  margin-bottom: 1.6em;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  overflow: auto;
+  padding: 0.5em 0.5em;
+  display: block;
+  word-wrap: break-word;
+  /*****Wrapping*****/
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap !important;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
+}
+
+footer {
+  text-align: center;
+  font-family: "Nunito", sans-serif;
+}
+
+a:link {
+  color: #6ab187;
+}
+
+a:visited {
+  color: #90afc5;
+}
+
+#editor {
+  border-color: #6fb98f;
+  color: #6fb98f;
+}
+
+#preview {
+  font-family: "Nunito", sans-serif;
+  color: #f4cc70;
+  border-color: #f4cc70;
+}
+
+#preview img {
+  max-width: 90%;
+  height: auto;
+}
+
+.editor-container,
+pre {
+  margin: 0 0;
+  padding: 0 0;
+}
+
+.fa {
+  font-size: 3vw;
+  color: #021c1e;
+}
+/*# sourceMappingURL=style.css.map */
