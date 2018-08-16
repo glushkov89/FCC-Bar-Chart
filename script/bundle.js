@@ -18400,14 +18400,14 @@ document.addEventListener("DOMContentLoaded", function() {
 	req.onload = function() {
 		const json = JSON.parse(req.responseText);
 		//		const data = json.data[0].append(json.data[1]).append(json.data[2]);
-		console.log(json.data);
+		console.log(json);
 		//		console.log(json);
 		//console.log(json.data.length);
 		/*----------------D3 Code here-----------------*/
-
 		const d3 = require("d3"),
+			units = json.description.match(/(units: )(.*)/i)[2],
 			//Padding
-			pd = { top: 30, bottom: 50, right: 50, left: 30 },
+			pd = { top: 50, bottom: 50, right: 30, left: 70 },
 			//Bar width
 			bw = 3,
 			//Diagram
@@ -18437,14 +18437,24 @@ document.addEventListener("DOMContentLoaded", function() {
 		const yAxis = d3.axisLeft(yA);
 		const xAxis = d3.axisBottom(x);
 
-		console.log(x(parseTime("1947-07-01")));
-
-		//		const xWidth = 5;
 		const svg = d3
 			.select("main")
 			.append("svg")
 			.attr("width", sw)
 			.attr("height", sh);
+		// 			var element = d3.select('.elementClassName').node();
+		// element.getBoundingClientRect().width;
+		const title = svg
+			.append("text")
+			.attr("id", "title")
+			.text(json.name + ", " + json.frequency + ".");
+		/*---Centering title in data and top padding---*/
+		title
+			.attr(
+				"x",
+				pd.left + dw / 2 - title.node().getBoundingClientRect().width / 2
+			)
+			.attr("y", (pd.top + title.node().getBoundingClientRect().height) / 2);
 		/*---------Generating bars-----------*/
 		svg
 			.selectAll("rect")
@@ -18454,28 +18464,30 @@ document.addEventListener("DOMContentLoaded", function() {
 			.attr("data-date", (d) => d[0])
 			.attr("data-gdp", (d) => d[1])
 			.attr("class", "bar")
-			.attr("x", (d, i) => i * bw + pd.right)
-			//.attr("x", (d) => x(d[0]))
+			.attr("x", (d, i) => i * bw + pd.left)
 			.attr("y", (d) => dh - y(d[1]) + pd.top)
 			.attr("width", bw)
 			.attr("height", (d) => y(d[1]));
-		/*---------Generating axis-----------*/
+		/*---------Generating axiss-----------*/
 		svg
 			.append("g")
 			.call(yAxis)
 			.attr("id", "y-axis")
-			.attr("transform", "translate(" + pd.right + ", " + pd.top + ")");
-		svg
+			.attr("transform", "translate(" + pd.left + ", " + pd.top + ")");
+		//Y-axis label alignment
+		const label = svg
 			.append("text")
-			//.attr("transform", "rotate(-90)")
-			.attr("x", pd.right)
-			.attr("y", pd.top)
-			.text("GDP");
+			.attr("id", "label")
+			.attr("transform", "rotate(-90)")
+			.text(units);
+		label
+			.attr("x", -(label.node().getBoundingClientRect().height + pd.top))
+			.attr("y", label.node().getBoundingClientRect().width + pd.left);
 		svg
 			.append("g")
 			.call(xAxis)
 			.attr("id", "x-axis")
-			.attr("transform", "translate(" + pd.right + ", " + (pd.top + dh) + ")");
+			.attr("transform", "translate(" + pd.left + ", " + (pd.top + dh) + ")");
 	};
 });
 
