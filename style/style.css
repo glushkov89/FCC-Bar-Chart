@@ -23,6 +23,25 @@ body {
     font-size: smaller;
 }
 
+.bar:hover {
+    fill: beige
+}
+
+div.tooltip {
+    font-family: "Nunito", sans-serif;
+    font-size: smaller;
+    position: absolute;
+    text-align: center;
+    width: auto;
+    height: auto;
+    padding: 10px;
+    background: #90afc5;
+    border: 0px;
+    border-radius: 2px;
+    box-shadow: 0px 0px 5px 0px #000;
+    pointer-events: none;
+}
+
 svg {
     background-color: rgb(225, 243, 243);
     font-family: "Nunito", sans-serif;
