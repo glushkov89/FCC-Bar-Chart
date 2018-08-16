@@ -18404,20 +18404,40 @@ document.addEventListener("DOMContentLoaded", function() {
 		//		console.log(json);
 		//console.log(json.data.length);
 		/*----------------D3 Code here-----------------*/
+
 		const d3 = require("d3"),
-			pd = { top: 10, bottom: 10, right: 10, left: 10 }, //Padding
-			bw = 3, //Bar width
-			sw = pd.left + json.data.length * bw + pd.right, //SVG canvas width
-			sh = pd.top + d3.max(json.data, (d) => d[1]) + pd.bottom, //SVG canvas height
-			x = d3 //X scale
+			//Padding
+			pd = { top: 30, bottom: 50, right: 50, left: 30 },
+			//Bar width
+			bw = 3,
+			//Diagram
+			dh = 500, //height
+			dw = json.data.length * bw, //width
+			//SVG
+			sw = pd.left + dw + pd.right, //width
+			sh = pd.top + dh + pd.bottom, //height
+			//Scales
+			parseTime = d3.timeParse("%Y-%m-%d"),
+			x = d3
+				.scaleTime()
+				.domain([
+					d3.min(json.data, (d) => parseTime(d[0])),
+					d3.max(json.data, (d) => parseTime(d[0]))
+				])
+				.range([0, dw]),
+			y = d3
 				.scaleLinear()
-				.domain([,])
-				.range([,]),
-			y = d3 //Y scale
+				.domain([0, d3.max(json.data, (d) => d[1])])
+				.range([0, dh]),
+			yA = d3
 				.scaleLinear()
-				.domain([,])
-				.range([,]);
-		console.log(sw);
+				.domain([0, d3.max(json.data, (d) => d[1])])
+				.range([dh, 0]);
+		//Axis
+		const yAxis = d3.axisLeft(yA);
+		const xAxis = d3.axisBottom(x);
+
+		console.log(x(parseTime("1947-07-01")));
 
 		//		const xWidth = 5;
 		const svg = d3
@@ -18431,11 +18451,31 @@ document.addEventListener("DOMContentLoaded", function() {
 			.data(json.data)
 			.enter()
 			.append("rect")
+			.attr("data-date", (d) => d[0])
+			.attr("data-gdp", (d) => d[1])
 			.attr("class", "bar")
-			.attr("x", (d, i) => i * bw)
-			.attr("y", (d) => sh - d[1])
+			.attr("x", (d, i) => i * bw + pd.right)
+			//.attr("x", (d) => x(d[0]))
+			.attr("y", (d) => dh - y(d[1]) + pd.top)
 			.attr("width", bw)
-			.attr("height", (d) => d[1]);
+			.attr("height", (d) => y(d[1]));
+		/*---------Generating axis-----------*/
+		svg
+			.append("g")
+			.call(yAxis)
+			.attr("id", "y-axis")
+			.attr("transform", "translate(" + pd.right + ", " + pd.top + ")");
+		svg
+			.append("text")
+			//.attr("transform", "rotate(-90)")
+			.attr("x", pd.right)
+			.attr("y", pd.top)
+			.text("GDP");
+		svg
+			.append("g")
+			.call(xAxis)
+			.attr("id", "x-axis")
+			.attr("transform", "translate(" + pd.right + ", " + (pd.top + dh) + ")");
 	};
 });
 
