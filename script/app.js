@@ -63,10 +63,13 @@ document.addEventListener("DOMContentLoaded", function() {
 			sw = pd.left + dw + pd.right, //width
 			sh = pd.top + dh + pd.bottom, //height
 			//Scales
+			//			parseTime = d3.timeParse("%Y-%m-%d"),
 			parseTime = d3.timeParse("%Y-%m-%d"),
 			x = d3
 				.scaleTime()
 				.domain([
+					// d3.min(json.data, (d) => parseTime(d[0])),
+					// d3.max(json.data, (d) => parseTime(d[0]))
 					d3.min(json.data, (d) => parseTime(d[0])),
 					d3.max(json.data, (d) => parseTime(d[0]))
 				])
@@ -79,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				.scaleLinear()
 				.domain([0, d3.max(json.data, (d) => d[1])])
 				.range([dh, 0]);
+		console.log(x(parseTime("2015-01-01")));
 		//Axis
 		const yAxis = d3.axisLeft(yA);
 		const xAxis = d3.axisBottom(x);
@@ -138,7 +142,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			.attr("data-gdp", (d) => d[1])
 			.attr("class", "bar")
 			.attr("fill", "#0f72b8")
-			.attr("x", (d, i) => i * bw + pd.left)
+			//	.attr("x", (d, i) => i * bw + pd.left)
+			.attr("x", (d) => x(parseTime(d[0])) + pd.left)
 			.attr("y", (d) => dh - y(d[1]) + pd.top)
 			.attr("width", bw)
 			.attr("height", (d) => y(d[1]))
