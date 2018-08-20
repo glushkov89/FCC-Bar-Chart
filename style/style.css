@@ -1,6 +1,4 @@
 @import url("https://fonts.googleapis.com/css?family=Nunito:300");
-@media only screen and (orientation: portrait) {}
-
 body {
     background-color: #90afc5;
 }
@@ -24,10 +22,10 @@ body {
 }
 
 .bar:hover {
-    fill: beige
+    fill: beige;
 }
 
-div.tooltip {
+div.mytooltip {
     font-family: "Nunito", sans-serif;
     font-size: smaller;
     position: absolute;

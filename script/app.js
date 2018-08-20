@@ -35,7 +35,6 @@
 // })();
 
 document.addEventListener("DOMContentLoaded", function() {
-	//	console.log("Document Loaded");
 	const req = new XMLHttpRequest();
 	req.open(
 		"GET",
@@ -45,31 +44,24 @@ document.addEventListener("DOMContentLoaded", function() {
 	req.send();
 	req.onload = function() {
 		const json = JSON.parse(req.responseText);
-		//		const data = json.data[0].append(json.data[1]).append(json.data[2]);
-		console.log(json);
-		//		console.log(json);
-		//console.log(json.data.length);
 		/*----------------D3 Code here-----------------*/
 		const d3 = require("d3"),
 			units = json.description.match(/(units: )(.*)/i)[2],
 			//Padding
-			pd = { top: 50, bottom: 50, right: 30, left: 70 },
+			mg = { top: 50, bottom: 50, right: 30, left: 70 },
 			//Bar width
 			bw = 3,
 			//Diagram
 			dh = 500, //height
 			dw = json.data.length * bw, //width
 			//SVG
-			sw = pd.left + dw + pd.right, //width
-			sh = pd.top + dh + pd.bottom, //height
+			sw = mg.left + dw + mg.right, //width
+			sh = mg.top + dh + mg.bottom, //height
 			//Scales
-			//			parseTime = d3.timeParse("%Y-%m-%d"),
 			parseTime = d3.timeParse("%Y-%m-%d"),
 			x = d3
 				.scaleTime()
 				.domain([
-					// d3.min(json.data, (d) => parseTime(d[0])),
-					// d3.max(json.data, (d) => parseTime(d[0]))
 					d3.min(json.data, (d) => parseTime(d[0])),
 					d3.max(json.data, (d) => parseTime(d[0]))
 				])
@@ -82,7 +74,6 @@ document.addEventListener("DOMContentLoaded", function() {
 				.scaleLinear()
 				.domain([0, d3.max(json.data, (d) => d[1])])
 				.range([dh, 0]);
-		console.log(x(parseTime("2015-01-01")));
 		//Axis
 		const yAxis = d3.axisLeft(yA);
 		const xAxis = d3.axisBottom(x);
@@ -92,10 +83,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			.append("svg")
 			.attr("width", sw)
 			.attr("height", sh);
+		const diag = svg
+			.append("g")
+			.attr("transform", `translate(${mg.left},${mg.top})`);
 		let tooltipDiv = d3
 			.select("body")
 			.append("div")
-			.attr("class", "tooltip")
+			.attr("id", "tooltip")
+			.attr("class", "mytooltip")
 			.style("opacity", 0);
 		const tooltipParse = (arr) => {
 			let qtr = "";
@@ -119,21 +114,19 @@ document.addEventListener("DOMContentLoaded", function() {
 				arr[1]
 			)} Billion`;
 		};
-		// 			var element = d3.select('.elementClassName').node();
-		// element.getBoundingClientRect().width;
 		const title = svg
 			.append("text")
 			.attr("id", "title")
 			.text(json.name + ", " + json.frequency + ".");
-		/*---Centering title in data and top padding---*/
+		/*---Centering title in data and top margin---*/
 		title
 			.attr(
 				"x",
-				pd.left + dw / 2 - title.node().getBoundingClientRect().width / 2
+				mg.left + dw / 2 - title.node().getBoundingClientRect().width / 2
 			)
-			.attr("y", (pd.top + title.node().getBoundingClientRect().height) / 2);
+			.attr("y", (mg.top + title.node().getBoundingClientRect().height) / 2);
 		/*---------Generating bars-----------*/
-		svg
+		diag
 			.selectAll("rect")
 			.data(json.data)
 			.enter()
@@ -142,22 +135,20 @@ document.addEventListener("DOMContentLoaded", function() {
 			.attr("data-gdp", (d) => d[1])
 			.attr("class", "bar")
 			.attr("fill", "#0f72b8")
-			//	.attr("x", (d, i) => i * bw + pd.left)
-			.attr("x", (d) => x(parseTime(d[0])) + pd.left)
-			.attr("y", (d) => dh - y(d[1]) + pd.top)
+			.attr("x", (d) => x(parseTime(d[0])))
+			.attr("y", (d) => dh - y(d[1]))
 			.attr("width", bw)
 			.attr("height", (d) => y(d[1]))
 			.on("mouseover", (d) => {
 				tooltipDiv
-					.attr("id", "tooltip")
 					.attr("data-date", d[0])
 					.transition()
 					.duration(100)
 					.style("opacity", 0.9);
 				tooltipDiv
 					.html(tooltipParse(d))
-					.style("left", d3.event.pageX + pd.right / 2 + "px")
-					.style("top", d3.event.pageY - pd.bottom + "px");
+					.style("left", d3.event.pageX + mg.right / 2 + "px")
+					.style("top", d3.event.pageY - mg.bottom + "px");
 			})
 			.on("mouseout", (d) => {
 				tooltipDiv
@@ -170,20 +161,20 @@ document.addEventListener("DOMContentLoaded", function() {
 			.append("g")
 			.call(yAxis)
 			.attr("id", "y-axis")
-			.attr("transform", "translate(" + pd.left + ", " + pd.top + ")");
+			.attr("transform", "translate(" + mg.left + ", " + mg.top + ")");
 		//Y-axis label alignment
-		const label = svg
+		const label = diag
 			.append("text")
 			.attr("id", "label")
 			.attr("transform", "rotate(-90)")
 			.text(units);
 		label
-			.attr("x", -(label.node().getBoundingClientRect().height + pd.top))
-			.attr("y", label.node().getBoundingClientRect().width + pd.left);
+			.attr("x", -label.node().getBoundingClientRect().height)
+			.attr("y", label.node().getBoundingClientRect().width);
 		svg
 			.append("g")
 			.call(xAxis)
 			.attr("id", "x-axis")
-			.attr("transform", "translate(" + pd.left + ", " + (pd.top + dh) + ")");
+			.attr("transform", "translate(" + mg.left + ", " + (mg.top + dh) + ")");
 	};
 });
